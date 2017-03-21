@@ -25,6 +25,9 @@ $(hotelBtn).on('click', function(){
   var coord = $('#hotel-choices :selected').attr('class').split(',')
   var currMarker = drawMarker('hotel', coord)
   $hotelItineraryItem.data("marker", currMarker);
+  // adds an item to our array at the proper day
+  itineraryArr[$('.day-buttons .current-day').text()].hotels.push({name: hotelSelect.val(), marker: currMarker});
+
 })
 
 $(restaurantBtn).on('click', function(){
@@ -34,7 +37,7 @@ $(restaurantBtn).on('click', function(){
   var coord = $('#restaurant-choices :selected').attr('class').split(',')
   var currMarker = drawMarker('restaurant', coord)
   $resItineraryItem.data("marker", currMarker);
-
+  itineraryArr[$('.day-buttons .current-day').text()].restaurants.push({name: restaurantSelect.val(), marker: currMarker});
 })
 
 $(activityBtn).on('click', function(){
@@ -44,10 +47,39 @@ $(activityBtn).on('click', function(){
   var coord = $('#activity-choices :selected').attr('class').split(',')
   var currMarker = drawMarker('activity', coord)
   $activityItineraryItem.data("marker", currMarker);
-
+  itineraryArr[$('.day-buttons .current-day').text()].activities.push({name: activitySelect.val(), marker: currMarker});
 })
 
 $('#itinerary').on('click', '.remove', function(){
-  $(this).parent().data().marker.setMap(null);
+  var tempMarker = $(this).parent().data().marker;
+  tempMarker.setMap(null);
+  var intineraryType = $(this).parent().parent().prev().text();
+  var arr1;
+  if(intineraryType === "My Hotel"){
+    arr1 = itineraryArr[$('.day-buttons .current-day').text()].hotels
+  } else if(intineraryType === "My Restaurants"){
+    arr1 = itineraryArr[$('.day-buttons .current-day').text()].restaurants
+  } else {
+    arr1 = itineraryArr[$('.day-buttons .current-day').text()].activities
+  }
+  for(var i = 0; i < arr1.length; i++){
+    if(arr1[i].marker === tempMarker){
+      arr1.splice(i, 1);
+    }
+  }
   $(this).parent().remove();
 })
+
+$('#day-add').on('click', function(){
+  $('<button class="btn btn-circle day-btn">' + (parseInt($(this).prev().text()) + 1) + '</button>').insertBefore(this);
+  itineraryArr[$(this).prev().text()] = { hotels: [], restaurants: [], activities: [] }
+});
+
+var itineraryArr = [];
+
+itineraryArr['1'] = { hotels: [], restaurants: [], activities: [] }
+
+// {name: hotel_name, marker: hotel_marker}
+
+
+
