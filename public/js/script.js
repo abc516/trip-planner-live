@@ -19,12 +19,12 @@ var restaurantBtn = buttons[1]
 var activityBtn = buttons[2]
 
 $(hotelBtn).on('click', function(){
-
   var $hotelItineraryItem = $('<div class="itinerary-item"><span class="title">'+ hotelSelect.val()+'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
   var hotelGroup = $('#itinerary .list-group:eq(0)')
   hotelGroup.append($hotelItineraryItem)
   var coord = $('#hotel-choices :selected').attr('class').split(',')
-  drawMarker('hotel', coord)
+  var currMarker = drawMarker('hotel', coord)
+  $hotelItineraryItem.data("marker", currMarker);
 })
 
 $(restaurantBtn).on('click', function(){
@@ -32,7 +32,9 @@ $(restaurantBtn).on('click', function(){
   var restaurantGroup = $('#itinerary .list-group:eq(1)')
   restaurantGroup.append($resItineraryItem)
   var coord = $('#restaurant-choices :selected').attr('class').split(',')
-  drawMarker('restaurant', coord)
+  var currMarker = drawMarker('restaurant', coord)
+  $resItineraryItem.data("marker", currMarker);
+
 })
 
 $(activityBtn).on('click', function(){
@@ -40,5 +42,12 @@ $(activityBtn).on('click', function(){
   var activityGroup = $('#itinerary .list-group:eq(2)')
   activityGroup.append($activityItineraryItem)
   var coord = $('#activity-choices :selected').attr('class').split(',')
-  drawMarker('activity', coord)
+  var currMarker = drawMarker('activity', coord)
+  $activityItineraryItem.data("marker", currMarker);
+
+})
+
+$('#itinerary').on('click', '.remove', function(){
+  $(this).parent().data().marker.setMap(null);
+  $(this).parent().remove();
 })
