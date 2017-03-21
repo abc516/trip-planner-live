@@ -16,24 +16,21 @@
           <div>
             <h4>Hotels</h4>
             <select data-type="hotel" id="hotel-choices">
-              <option>Andaz Wall Street</option>
-              <option>...</option>
+
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
           <div>
             <h4>Restaurants</h4>
             <select data-type="restaurant" id="restaurant-choices">
-              <option>Bouley</option>
-              <option>...</option>
+
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
           <div>
             <h4>Activities</h4>
             <select data-type="activity" id="activity-choices">
-              <option>Mahayana Buddhist Temple Association</option>
-              <option>...</option>
+
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
@@ -89,4 +86,22 @@
     </div>
   </div>
 </div>
+<script src="/jquery/jquery.min.js"></script>
+<script>
+  var hotels = {{ hotels | dump | safe }};
+  var restaurants = {{ restaurants | dump | safe }};
+  var activities = {{ activities | dump | safe }};
+  var hotelSelect = $('#hotel-choices') //.append('<option>' + )
+  for(var i = 0; i < hotels.length; i++){
+    hotelSelect.append('<option>' + hotels[i].name + '</option>')
+  }
+  var restaurantSelect = $('#restaurant-choices')
+  for(var i = 0; i < restaurants.length; i++){
+    restaurantSelect.append('<option>' + restaurants[i].name + '</option>')
+  }
+  var activitySelect = $('#activity-choices')
+  for(var i = 0; i < activities.length; i++){
+    activitySelect.append('<option>' + activities[i].name + '</option>')
+  }
+</script>
 {% endblock %}
