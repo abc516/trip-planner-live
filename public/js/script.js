@@ -71,9 +71,63 @@ $('#itinerary').on('click', '.remove', function(){
 })
 
 $('#day-add').on('click', function(){
-  $('<button class="btn btn-circle day-btn">' + (parseInt($(this).prev().text()) + 1) + '</button>').insertBefore(this);
+  $('<button class="btn btn-circle day-btn num-day">' + (parseInt($(this).prev().text()) + 1) + '</button>').insertBefore(this);
   itineraryArr[$(this).prev().text()] = { hotels: [], restaurants: [], activities: [] }
 });
+
+$('.day-buttons').on('click', '.num-day', function(){
+  clearDay($('.day-buttons .current-day').text());
+  $('.day-buttons .current-day').removeClass('current-day');
+  $(this).addClass('current-day');
+  populateList($(this).text());
+  $('#day-title span').text("Day " + $(this).text())
+})
+
+var clearDay = function(dayStr){
+  var arr1 = itineraryArr[dayStr].hotels
+  console.log(arr1);
+  for(var i = 0; i < arr1.length; i++){
+    arr1[i].marker.setMap(null);
+  }
+  arr1 = itineraryArr[dayStr].restaurants
+  for(var i = 0; i < arr1.length; i++){
+    arr1[i].marker.setMap(null);
+  }
+  arr1 = itineraryArr[dayStr].activities
+  for(var i = 0; i < arr1.length; i++){
+    arr1[i].marker.setMap(null);
+  }
+
+  $('.list-group').empty();
+}
+
+var populateList = function(dayStr){
+  var arr1 = itineraryArr[dayStr].hotels
+  console.log(arr1);
+  for(var i = 0; i < arr1.length; i++){
+    var $hotelItineraryItem = $('<div class="itinerary-item"><span class="title">'+ arr1[i].name +'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
+    var hotelGroup = $('#itinerary .list-group:eq(0)')
+    hotelGroup.append($hotelItineraryItem)
+    $hotelItineraryItem.data("marker", arr1[i].marker)
+    arr1[i].marker.setMap(currentMap);
+  }
+  arr1 = itineraryArr[dayStr].restaurants
+  for(var i = 0; i < arr1.length; i++){
+    var $resItineraryItem = $('<div class="itinerary-item"><span class="title">'+ arr1[i].name +'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
+    var restaurantGroup = $('#itinerary .list-group:eq(1)')
+    restaurantGroup.append($resItineraryItem)
+    $resItineraryItem.data("marker", arr1[i].marker)
+    arr1[i].marker.setMap(currentMap);
+  }
+  arr1 = itineraryArr[dayStr].activities
+  for(var i = 0; i < arr1.length; i++){
+    var $activityItineraryItem = $('<div class="itinerary-item"><span class="title">'+ arr1[i].name +'</span><button class="btn btn-xs btn-danger remove btn-circle">x</button></div>')
+    var activityGroup = $('#itinerary .list-group:eq(2)')
+    activityGroup.append($activityItineraryItem)
+    $activityItineraryItem.data("marker", arr1[i].marker)
+    arr1[i].marker.setMap(currentMap);
+  }
+}
 
 var itineraryArr = [];
 
