@@ -24,7 +24,7 @@ var activityBtn = buttons[2];
 
 // an array that holds the itinerary for each day in the form of an object that holds an array for each type of item
 var itineraryArr = [];
-itineraryArr['1'] = { hotels: [], restaurants: [], activities: [] }
+itineraryArr[1] = { hotels: [], restaurants: [], activities: [] }
 
 /*****  DOM AND MAP POPULATOR FUNCTIONS   *****/
 
@@ -65,7 +65,7 @@ $(hotelBtn).on('click', function(){
   // build the marker
   var coord = $('#hotel-choices :selected').attr('class').split(',');     // coord is stored in the class of the option
   var currMarker = drawMarker('hotel', coord);
-  // add the hotel to our DOM and 
+  // add the hotel to our DOM and
   addHotel(hotelSelect.val(), currMarker);
   // adds an item to our array at the proper day
   itineraryArr[currDay()].hotels.push({name: hotelSelect.val(), marker: currMarker});
@@ -87,7 +87,7 @@ $(activityBtn).on('click', function(){
 
 /***** ADD BUTTONS END  *****/
 
-// REMOTE ITEM BUTTON
+// REMOVE ITEM BUTTON
 $('#itinerary').on('click', '.remove', function(){
   var tempMarker = $(this).parent().data().marker;
   tempMarker.setMap(null);
@@ -111,11 +111,12 @@ $('#itinerary').on('click', '.remove', function(){
 /*****  DAY FUNCTIONS AND BUTTONS   *****/
 
 var currDay = function(){
-  return $('.day-buttons .current-day').text();
+  return parseInt($('.day-buttons .current-day').text());
 }
 
 // function to clear the DOM and markers
 var clearDay = function(dayStr){
+  if(!currDay()) return
   var arr1 = itineraryArr[dayStr].hotels;
   for(var i = 0; i < arr1.length; i++){
     arr1[i].marker.setMap(null);
@@ -133,8 +134,8 @@ var clearDay = function(dayStr){
 
 // adding days
 $('#day-add').on('click', function(){
-  $('<button class="btn btn-circle day-btn num-day">' + (parseInt($(this).prev().text()) + 1) + '</button>').insertBefore(this);
-  itineraryArr[$(this).prev().text()] = { hotels: [], restaurants: [], activities: [] };
+  $('<button class="btn btn-circle day-btn num-day">' + ((parseInt($(this).prev().text()) + 1) || 1) + '</button>').insertBefore(this);
+  itineraryArr[parseInt($(this).prev().text())] = { hotels: [], restaurants: [], activities: [] };
 });
 
 // switch days
@@ -148,6 +149,18 @@ $('.day-buttons').on('click', '.num-day', function(){
   populateList($(this).text());
   // change the current day title
   $('#day-title span').text("Day " + $(this).text());
+})
+//remove a day
+$('#remove-day').on('click', function(){
+  clearDay(currDay())
+  itineraryArr.splice(currDay(), 1)
+  $('.day-buttons .num-day:last').remove()
+  //if we are deleting last day
+  if(!currDay()) {
+    $('.day-buttons .num-day:last').addClass('current-day')
+    $('#day-title span').text('Day ' + currDay())
+  }
+  populateList(currDay())
 })
 
 /*****  DAY FUNCTIONS AND BUTTONS END  *****/
