@@ -69,6 +69,7 @@ $(hotelBtn).on('click', function(){
   addHotel(hotelSelect.val(), currMarker);
   // adds an item to our array at the proper day
   itineraryArr[currDay()].hotels.push({name: hotelSelect.val(), marker: currMarker});
+  boundMap(currDay())
 })
 
 $(restaurantBtn).on('click', function(){
@@ -76,6 +77,7 @@ $(restaurantBtn).on('click', function(){
   var currMarker = drawMarker('restaurant', coord);
   addRestaurant(restaurantSelect.val(), currMarker);
   itineraryArr[currDay()].restaurants.push({name: restaurantSelect.val(), marker: currMarker});
+  boundMap(currDay())
 })
 
 $(activityBtn).on('click', function(){
@@ -83,6 +85,7 @@ $(activityBtn).on('click', function(){
   var currMarker = drawMarker('activity', coord);
   addActivity(activitySelect.val(), currMarker);
   itineraryArr[currDay()].activities.push({name: activitySelect.val(), marker: currMarker});
+  boundMap(currDay())
 })
 
 /***** ADD BUTTONS END  *****/
@@ -149,6 +152,8 @@ $('.day-buttons').on('click', '.num-day', function(){
   populateList($(this).text());
   // change the current day title
   $('#day-title span').text("Day " + $(this).text());
+  //dynamically resize map
+  boundMap(currDay())
 })
 //remove a day
 $('#remove-day').on('click', function(){
@@ -161,12 +166,15 @@ $('#remove-day').on('click', function(){
     $('#day-title span').text('Day ' + currDay())
   }
   populateList(currDay())
+  //dynamically resize map
+  boundMap(currDay())
 })
 
 /*****  DAY FUNCTIONS AND BUTTONS END  *****/
 
 
 var populateList = function(dayStr){
+  if(!dayStr) return
   var arr1 = itineraryArr[dayStr].hotels
   for(var i = 0; i < arr1.length; i++){
     addHotel(arr1[i].name, arr1[i].marker);
@@ -179,5 +187,31 @@ var populateList = function(dayStr){
   arr1 = itineraryArr[dayStr].activities
   for(var i = 0; i < arr1.length; i++){
     addActivity(arr1[i].name, arr1[i].marker);
+  }
+}
+
+// Function to set bounds based on current Day
+var boundMap = function(day){
+  if(!day) return
+  var bounds = new google.maps.LatLngBounds();
+  var arr1 = itineraryArr[day].hotels
+  for(var i = 0; i < arr1.length; i++){
+    //addHotel(arr1[i].name, arr1[i].marker);
+    bounds.extend(arr1[i].marker.position)
+  }
+  arr1 = itineraryArr[day].restaurants
+  for(var i = 0; i < arr1.length; i++){
+    //addRestaurant(arr1[i].name, arr1[i].marker);
+    bounds.extend(arr1[i].marker.position)
+  }
+  arr1 = itineraryArr[day].activities
+  for(var i = 0; i < arr1.length; i++){
+    // addActivity(arr1[i].name, arr1[i].marker);
+    bounds.extend(arr1[i].marker.position)
+  }
+  if(!bounds.isEmpty()) currentMap.fitBounds(bounds)
+  else{
+    currentMap.setCenter(new google.maps.LatLng(40.705086, -74.009151))
+    currentMap.setZoom(13)
   }
 }
