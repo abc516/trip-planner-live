@@ -150,7 +150,7 @@ var clearDay = function(dayStr){
 
 // adding days
 $('#day-add').on('click', function(){
-  $('<button class="btn btn-circle day-btn num-day">' + ((parseInt($(this).prev().text()) + 1) || 1) + '</button>').insertBefore(this);
+  $('<button draggable="true" ondragover="allowDrop(event)" ondrop="drop(event)" ondragstart="dragStart(event)" class="btn btn-circle day-btn num-day">' + ((parseInt($(this).prev().text()) + 1) || 1) + '</button>').insertBefore(this);
   itineraryArr[parseInt($(this).prev().text())] = { hotels: [], restaurants: [], activities: [] };
 });
 
@@ -227,4 +227,28 @@ var boundMap = function(day){
     currentMap.setCenter(new google.maps.LatLng(40.705086, -74.009151))
     currentMap.setZoom(13)
   }
+}
+
+//drag/drop FUNCTIONS
+// ondrop="drop(event)" ondragstart="dragStart(event)"
+function swap(dayA, dayB){
+  var temp = itineraryArr[dayA]
+  itineraryArr[dayA] = itineraryArr[dayB]
+  itineraryArr[dayB] = temp
+}
+
+function drop(event){
+  swap( parseInt(event.dataTransfer.getData("Index") ), parseInt(event.target.innerHTML ))
+  clearDay(currDay())
+  populateList(currDay())
+  //dynamically resize map
+  boundMap(currDay())
+}
+
+function dragStart(event){
+  event.dataTransfer.setData("Index", event.target.innerHTML)
+}
+
+function allowDrop(event){
+  event.preventDefault()
 }
