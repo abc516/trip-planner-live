@@ -5,17 +5,19 @@ var hotelSelect = $('#hotel-choices');
 var restaurantSelect = $('#restaurant-choices');
 var activitySelect = $('#activity-choices');
 
+
 // populate our options
 for(var i = 0; i < hotels.length; i++){
-  hotelSelect.append('<option class='+ hotels[i].place.location+ '>' + hotels[i].name + '</option>');
+  hotelSelect.append('<option title="'+ hotels[i].amenities+ '" class='+ hotels[i].place.location+ '>' + hotels[i].name + '</option>');
 }
 for(var i = 0; i < restaurants.length; i++){
-  restaurantSelect.append('<option class='+ restaurants[i].place.location+ '>' + restaurants[i].name + '</option>');
+  restaurantSelect.append('<option title="'+ restaurants[i].cuisine+ '" class='+ restaurants[i].place.location+ '>' + restaurants[i].name + '</option>');
 }
 for(var i = 0; i < activities.length; i++){
-  activitySelect.append('<option class='+ activities[i].place.location+ '>' + activities[i].name + '</option>');
+  activitySelect.append('<option title="'+ activities[i].age_range+ '" class='+ activities[i].place.location+ '>' + activities[i].name + '</option>');
 }
 
+$('[data-toggle="tooltip"]').tooltip()
 // add item buttons
 var buttons = $('#options-panel').find('button');
 var hotelBtn = buttons[0];
@@ -62,6 +64,12 @@ var addActivity = function(name, marker){
 /*****  ADD BUTTONS   *****/
 
 $(hotelBtn).on('click', function(){
+  //check that we haven't reached max hotel for current day in itinerary
+  if(itineraryArr[currDay()].hotels.length >= 1){
+    alert('Too many hotels asshole')
+    return
+  }
+
   // build the marker
   var coord = $('#hotel-choices :selected').attr('class').split(',');     // coord is stored in the class of the option
   var currMarker = drawMarker('hotel', coord);
@@ -73,6 +81,11 @@ $(hotelBtn).on('click', function(){
 })
 
 $(restaurantBtn).on('click', function(){
+  //check that we haven't reached max hotel for current day in itinerary
+  if(itineraryArr[currDay()].restaurants.length >= 3){
+    alert('Too many restaurants fatass')
+    return
+  }
   var coord = $('#restaurant-choices :selected').attr('class').split(',');
   var currMarker = drawMarker('restaurant', coord);
   addRestaurant(restaurantSelect.val(), currMarker);
